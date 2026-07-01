@@ -14,15 +14,14 @@ Requires RINLA package to build stuff. Q built this way can be used in \ref GMRF
 */
 
 namespace R_inla {
-using namespace Eigen;
 using namespace tmbutils;
 
 /** \brief Object containing all elements of an SPDE object, i.e. eqn (10) in Lindgren et al. */	
 template<class Type>
 struct spde_t{  
-  SparseMatrix<Type> M0;	// G0 eqn (10) in Lindgren 
-  SparseMatrix<Type> M1;	// G1 eqn (10) in Lindgren 
-  SparseMatrix<Type> M2;	// G2 eqn (10) in Lindgren 
+  Eigen::SparseMatrix<Type> M0;	// G0 eqn (10) in Lindgren 
+  Eigen::SparseMatrix<Type> M1;	// G1 eqn (10) in Lindgren 
+  Eigen::SparseMatrix<Type> M2;	// G2 eqn (10) in Lindgren 
   spde_t(SEXP x){  /* x = List passed from R */
   M0 = asSparseMatrix<Type>(getListElement(x,"M0"));
   M1 = asSparseMatrix<Type>(getListElement(x,"M1"));
@@ -32,7 +31,7 @@ struct spde_t{
 
 /** Precision matrix eqn (10) in Lindgren et al. (2011) */    
 template<class Type>
-  SparseMatrix<Type> Q_spde(spde_t<Type> spde, Type kappa){
+  Eigen::SparseMatrix<Type> Q_spde(spde_t<Type> spde, Type kappa){
   Type kappa_pow2 = kappa*kappa;
   Type kappa_pow4 = kappa_pow2*kappa_pow2;
   	
@@ -49,8 +48,8 @@ struct spde_aniso_t{
   matrix<Type> E1;
   matrix<Type> E2;
   matrix<int>  TV;
-  SparseMatrix<Type> G0;
-  SparseMatrix<Type> G0_inv;
+  Eigen::SparseMatrix<Type> G0;
+  Eigen::SparseMatrix<Type> G0_inv;
   spde_aniso_t(SEXP x){  /* x = List passed from R */
   n_s = 	CppAD::Integer(asVector<Type>(getListElement(x,"n_s"))[0]);  
   n_tri = 	CppAD::Integer(asVector<Type>(getListElement(x,"n_tri"))[0]);  
@@ -68,7 +67,7 @@ struct spde_aniso_t{
 
 /** Precision matrix for the anisotropic case, eqn (20) in Lindgren et al. (2011) */    
 template<class Type>
-  SparseMatrix<Type> Q_spde(spde_aniso_t<Type> spde, Type kappa, matrix<Type> H){
+  Eigen::SparseMatrix<Type> Q_spde(spde_aniso_t<Type> spde, Type kappa, matrix<Type> H){
 
   int i;
   Type kappa_pow2 = kappa*kappa;
@@ -81,13 +80,13 @@ template<class Type>
   matrix<Type> E1 = spde.E1;
   matrix<Type> E2 = spde.E2;
   matrix<int> TV = spde.TV;
-  SparseMatrix<Type> G0 = spde.G0;
-  SparseMatrix<Type> G0_inv = spde.G0_inv;
+  Eigen::SparseMatrix<Type> G0 = spde.G0;
+  Eigen::SparseMatrix<Type> G0_inv = spde.G0_inv;
 	  	  
   //Type H_trace = H(0,0)+H(1,1);
   //Type H_det = H(0,0)*H(1,1)-H(0,1)*H(1,0);
-  SparseMatrix<Type> G1_aniso(n_s,n_s); 
-  SparseMatrix<Type> G2_aniso(n_s,n_s); 
+  Eigen::SparseMatrix<Type> G1_aniso(n_s,n_s); 
+  Eigen::SparseMatrix<Type> G2_aniso(n_s,n_s); 
   // Calculate adjugate of H
   matrix<Type> adj_H(2,2);
   adj_H(0,0) = H(1,1);
@@ -125,5 +124,3 @@ template<class Type>
 }
 
 } // end namespace R_inla
-
-
