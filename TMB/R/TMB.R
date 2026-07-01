@@ -386,7 +386,7 @@ MakeADFun <- function(data, parameters, map=list(),
       if(!silent) cat("Your parameter list has been re-ordered.\n(Disable this warning with checkParameterOrder=FALSE)\n")
     }
   }
-  
+
   ## Prepare parameter mapping.
   ## * A parameter map is a factor telling which parameters should be grouped
   ## * NA values are untouched: So user can e.g. set them to zero
@@ -793,7 +793,7 @@ MakeADFun <- function(data, parameters, map=list(),
           perm <- L@perm+1L
           ihessian <- .Call("tmb_sparse_izamd", ihessian, profile[perm], 0.0, PACKAGE="TMB")
       }
-      
+
       ## General function to lookup entries A subset B.
       ## lookup.old <- function(A,B){
       ##   A <- as(tril(A),"dtTMatrix")
@@ -950,7 +950,7 @@ MakeADFun <- function(data, parameters, map=list(),
           }
           updateCholesky(L,hessian)
       }
-      
+
       ## res <- grad[-random] -
       ##   hess[-random,random]%*%as.vector(solve(hess[random,random],grad[random]))
 
@@ -1360,6 +1360,10 @@ compile <- function(file,flags="",safebounds=TRUE,safeunload=TRUE,
       length(grep("-g",  flags))
   fpath <- system.file(paste0("libs", Sys.getenv("R_ARCH")),
                        package="TMB")
+  tfile <- tempfile(fileext = ".cpp")
+  cppcode <- gsub("using namespace Eigen;", "", readLines(file), fixed = TRUE)
+  writeLines(cppcode, tfile)
+  file <- tfile
   f <- paste0(fpath,
               "/libTMB",
               if      (openmp) "omp"
